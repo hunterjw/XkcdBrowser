@@ -150,6 +150,14 @@ namespace XkcdBrowser
 			ComicArchiveEntry comicListEntry = ComicDictionary[id];
 			return GetComic(comicListEntry, url, doc);
 		}
+
+		/// <summary>
+		/// Refresh the comic dictionary, reloading the entire archive webpage
+		/// </summary>
+		public static void RefreshComicDictionary()
+		{
+			_comicDictionary = GetComicDictionary();
+		}
 		#endregion
 	}
 }
