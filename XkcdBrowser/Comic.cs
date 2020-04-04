@@ -1,4 +1,6 @@
-﻿namespace XkcdBrowser
+﻿using System.Linq;
+
+namespace XkcdBrowser
 {
 	/// <summary>
 	/// A xkcd comic
@@ -34,5 +36,33 @@
 		/// Date text string (YYYY-M-D)
 		/// </summary>
 		public string Date { get; set; }
+
+		/// <summary>
+		/// Gets the next comic
+		/// </summary>
+		/// <returns>Next comic, or null if no next comic</returns>
+		public Comic Next()
+		{
+			ComicArchiveEntry nextArchiveEntry = Xkcd.ComicDictionary.OrderBy(x => x.Key).SkipWhile(x => x.Key <= Id).FirstOrDefault().Value;
+			if (nextArchiveEntry != null)
+			{
+				return Xkcd.GetComic(nextArchiveEntry);
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Gets the previous comic
+		/// </summary>
+		/// <returns>Previous comic, or null if no previous comic</returns>
+		public Comic Previous()
+		{
+			ComicArchiveEntry nextArchiveEntry = Xkcd.ComicDictionary.OrderByDescending(x => x.Key).SkipWhile(x => x.Key >= Id).FirstOrDefault().Value;
+			if (nextArchiveEntry != null)
+			{
+				return Xkcd.GetComic(nextArchiveEntry);
+			}
+			return null;
+		}
 	}
 }

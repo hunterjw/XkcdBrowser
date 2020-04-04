@@ -47,19 +47,6 @@ namespace XkcdBrowser
 		}
 
 		/// <summary>
-		/// Gets a comic from a comic archive entry
-		/// </summary>
-		/// <param name="comicArchiveEntry">Comic archive entry</param>
-		/// <returns>Comic object</returns>
-		private static Comic GetComic(ComicArchiveEntry comicArchiveEntry)
-		{
-			var permaLink = $"https://xkcd.com/{comicArchiveEntry.Id}/";
-			var web = new HtmlWeb();
-			HtmlDocument doc = web.Load(permaLink);
-			return GetComic(comicArchiveEntry, permaLink, doc);
-		}
-
-		/// <summary>
 		/// Gets a comic from a comic archive entry, comic url, and html document
 		/// </summary>
 		/// <param name="comicArchiveEntry">Comic archive entry</param>
@@ -97,6 +84,19 @@ namespace XkcdBrowser
 		#endregion
 
 		#region Public Methods
+		/// <summary>
+		/// Gets a comic from a comic archive entry
+		/// </summary>
+		/// <param name="comicArchiveEntry">Comic archive entry</param>
+		/// <returns>Comic object</returns>
+		public static Comic GetComic(ComicArchiveEntry comicArchiveEntry)
+		{
+			var permaLink = $"https://xkcd.com/{comicArchiveEntry.Id}/";
+			var web = new HtmlWeb();
+			HtmlDocument doc = web.Load(permaLink);
+			return GetComic(comicArchiveEntry, permaLink, doc);
+		}
+
 		/// <summary>
 		/// Gets a comic by ID
 		/// </summary>
