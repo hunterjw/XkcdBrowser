@@ -29,5 +29,10 @@
 		/// Link to to the comic webpage
 		/// </summary>
 		public string PermaLink { get; set; }
+
+		/// <summary>
+		/// Date text string (YYYY-M-D)
+		/// </summary>
+		public string Date { get; set; }
 	}
 }

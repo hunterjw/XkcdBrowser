@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace XkcdBrowser
@@ -8,39 +9,94 @@ namespace XkcdBrowser
 	/// </summary>
 	public static class Xkcd
 	{
-		/// <summary>
-		/// Gets a comic by URL
-		/// </summary>
-		/// <param name="url">URL to the comic</param>
-		/// <returns>Requested comic</returns>
-		public static Comic GetComic(string url = "https://xkcd.com/")
-		{
-			// This feels *bad* parsing the HTML, but I'm too lazy to do anything about it
-			var web = new HtmlWeb();
-			HtmlDocument doc = web.Load(url);
-			HtmlNode comicNode = doc.DocumentNode.Descendants().Where(y => y.Id == "comic").FirstOrDefault();
-			HtmlNode comicImageNode = comicNode.Descendants().Where(x => x.Name == "img").FirstOrDefault();
-			HtmlNode headNode = doc.DocumentNode.Descendants().Where(x => x.Name == "head").FirstOrDefault();
-			HtmlNode metaTitleNode = headNode.Descendants().Where(x =>
-				x.Name == "meta" && x.Attributes["property"] != null && x.Attributes["property"].DeEntitizeValue == "og:title")
-				.FirstOrDefault();
-			HtmlNode metaUrlNode = headNode.Descendants().Where(x =>
-				x.Name == "meta" && x.Attributes["property"] != null && x.Attributes["property"].DeEntitizeValue == "og:url")
-				.FirstOrDefault();
-			var permaLink = metaUrlNode.Attributes["content"].DeEntitizeValue;
-			var permaLinkPieces = permaLink.Split('/');
-			var comic = new Comic
-			{
-				Id = int.Parse(permaLinkPieces[permaLinkPieces.Length - 2]),
-				ImageUrl = $"https:{comicImageNode.Attributes["src"].Value}",
-				AltText = comicImageNode.Attributes["title"].DeEntitizeValue,
-				Title = metaTitleNode.Attributes["content"].DeEntitizeValue,
-				PermaLink = permaLink
-			};
+		#region Properties
+		private static Dictionary<int, ComicArchiveEntry> _comicDictionary { get; set; }
 
-			return comic;
+		/// <summary>
+		/// A dictionary of all comics, keyed by comic ID
+		/// </summary>
+		public static Dictionary<int, ComicArchiveEntry> ComicDictionary
+		{
+			get
+			{
+				if (_comicDictionary == null)
+				{
+					_comicDictionary = GetComicDictionary();
+				}
+				return _comicDictionary;
+			}
+		}
+		#endregion
+
+		#region Private Methods
+		/// <summary>
+		/// Gets a dictionary of comic from the xkcd archive
+		/// </summary>
+		/// <returns>Dictionary of comics, keyed on comic ID</returns>
+		private static Dictionary<int, ComicArchiveEntry> GetComicDictionary()
+		{
+			var web = new HtmlWeb();
+			HtmlDocument doc = web.Load("https://xkcd.com/archive/");
+			HtmlNode middleContainer = doc.DocumentNode.Descendants().FirstOrDefault(x => x.Id == "middleContainer");
+			return middleContainer.Descendants().Where(x => x.Name == "a").Select(a => new ComicArchiveEntry
+			{
+				Id = int.Parse(a.Attributes["href"].Value.Split('/')[1]),
+				Date = a.Attributes["title"].Value,
+				Title = a.InnerText
+			}).ToDictionary(x => x.Id);
 		}
 
+		/// <summary>
+		/// Gets a comic from a comic archive entry
+		/// </summary>
+		/// <param name="comicArchiveEntry">Comic archive entry</param>
+		/// <returns>Comic object</returns>
+		private static Comic GetComic(ComicArchiveEntry comicArchiveEntry)
+		{
+			var permaLink = $"https://xkcd.com/{comicArchiveEntry.Id}/";
+			var web = new HtmlWeb();
+			HtmlDocument doc = web.Load(permaLink);
+			return GetComic(comicArchiveEntry, permaLink, doc);
+		}
+
+		/// <summary>
+		/// Gets a comic from a comic archive entry, comic url, and html document
+		/// </summary>
+		/// <param name="comicArchiveEntry">Comic archive entry</param>
+		/// <param name="url">Comic permalink</param>
+		/// <param name="doc">Comic webpage html document</param>
+		/// <returns>Comic object</returns>
+		private static Comic GetComic(ComicArchiveEntry comicArchiveEntry, string url, HtmlDocument doc)
+		{
+			HtmlNode headNode = doc.DocumentNode.Descendants().Where(x => x.Name == "head").FirstOrDefault();
+			HtmlNode metaImageNode = headNode.Descendants().Where(x =>
+				x.Name == "meta" && x.Attributes["property"] != null && x.Attributes["property"].DeEntitizeValue == "og:image")
+				.FirstOrDefault();
+			HtmlNode comicNode = doc.DocumentNode.Descendants().Where(y => y.Id == "comic").FirstOrDefault();
+			HtmlNode comicImageNode = comicNode.Descendants().Where(x => x.Name == "img").FirstOrDefault();
+			string imageUrl = string.Empty;
+			if (metaImageNode != null)
+			{
+				imageUrl = metaImageNode.Attributes["content"].DeEntitizeValue;
+			}
+			string altText = string.Empty;
+			if (comicImageNode != null)
+			{
+				altText = comicImageNode.Attributes["title"].DeEntitizeValue;
+			}
+			return new Comic
+			{
+				Id = comicArchiveEntry.Id,
+				ImageUrl = imageUrl,
+				AltText = altText,
+				Title = comicArchiveEntry.Title,
+				PermaLink = url,
+				Date = comicArchiveEntry.Date
+			};
+		}
+		#endregion
+
+		#region Public Methods
 		/// <summary>
 		/// Gets a comic by ID
 		/// </summary>
@@ -48,7 +104,11 @@ namespace XkcdBrowser
 		/// <returns>Requested comic</returns>
 		public static Comic GetComic(int id)
 		{
-			return GetComic($"https://xkcd.com/{id}/");
+			if (ComicDictionary.Keys.Contains(id))
+			{
+				return GetComic(ComicDictionary[id]);
+			}
+			return null;
 		}
 
 		/// <summary>
@@ -57,7 +117,8 @@ namespace XkcdBrowser
 		/// <returns>The latest comic</returns>
 		public static Comic GetLatestComic()
 		{
-			return GetComic();
+			ComicArchiveEntry latest = ComicDictionary.OrderByDescending(x => x.Key).FirstOrDefault().Value;
+			return GetComic(latest);
 		}
 
 		/// <summary>
@@ -66,16 +127,29 @@ namespace XkcdBrowser
 		/// <returns>The first comic</returns>
 		public static Comic GetFirstComic()
 		{
-			return GetComic(1);
+			ComicArchiveEntry first = ComicDictionary.OrderBy(x => x.Key).FirstOrDefault().Value;
+			return GetComic(first);
 		}
 
 		/// <summary>
-		/// Gets a random comic
+		/// Gets a random comic, using the xkcd random comic url
 		/// </summary>
 		/// <returns>Random comic</returns>
 		public static Comic GetRandomComic()
 		{
-			return GetComic("https://c.xkcd.com/random/comic/");
+			var randomUrl = "https://c.xkcd.com/random/comic/";
+			var web = new HtmlWeb();
+			HtmlDocument doc = web.Load(randomUrl);
+			HtmlNode headNode = doc.DocumentNode.Descendants().Where(x => x.Name == "head").FirstOrDefault();
+			HtmlNode metaUrlNode = headNode.Descendants().Where(x =>
+				x.Name == "meta" && x.Attributes["property"] != null && x.Attributes["property"].DeEntitizeValue == "og:url")
+				.FirstOrDefault();
+			var url = metaUrlNode.Attributes["content"].DeEntitizeValue;
+			var urlPieces = url.Split('/');
+			var id = int.Parse(urlPieces[urlPieces.Length - 2]);
+			ComicArchiveEntry comicListEntry = ComicDictionary[id];
+			return GetComic(comicListEntry, url, doc);
 		}
+		#endregion
 	}
 }
