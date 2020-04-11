@@ -148,24 +148,19 @@ namespace XkcdBrowser
 					altText = "The keys to successfully throwing a party are location, planning, and one of those aircraft carrier steam catapults.";
 					break;
 				default:
-					HtmlNode headNode = doc.DocumentNode.Descendants().Where(x => x.Name == "head").FirstOrDefault();
-					HtmlNode metaImageNode = headNode.Descendants().Where(x =>
-						x.Name == "meta" && x.Attributes["property"] != null && x.Attributes["property"].DeEntitizeValue == "og:image")
-						.FirstOrDefault();
 					HtmlNode comicNode = doc.DocumentNode.Descendants().Where(y => y.Id == "comic").FirstOrDefault();
 					HtmlNode comicImageNode = comicNode.Descendants().Where(x => x.Name == "img").FirstOrDefault();
 
-					if (metaImageNode != null && metaImageNode.Attributes["content"] != null)
+					if (comicImageNode != null)
 					{
-						imageUrl = metaImageNode.Attributes["content"].DeEntitizeValue;
-					}
-					if (imageUrl == string.Empty && comicImageNode != null && comicImageNode.Attributes["src"] != null)
-					{
-						imageUrl = $"https:{comicImageNode.Attributes["src"].DeEntitizeValue}";
-					}
-					if (comicImageNode != null && comicImageNode.Attributes["title"] != null)
-					{
-						altText = comicImageNode.Attributes["title"].DeEntitizeValue;
+						if (comicImageNode.Attributes["src"] != null)
+						{
+							imageUrl = $"https:{comicImageNode.Attributes["src"].DeEntitizeValue}";
+						}
+						if (comicImageNode.Attributes["title"] != null)
+						{
+							altText = comicImageNode.Attributes["title"].DeEntitizeValue;
+						}
 					}
 					break;
 			}
@@ -195,6 +190,11 @@ namespace XkcdBrowser
 			return comic;
 		}
 
+		/// <summary>
+		/// Gets a comic from the cached database
+		/// </summary>
+		/// <param name="comicId">Comic ID</param>
+		/// <returns>Comic object if found, null otherwise</returns>
 		private static Comic GetComicFromDB(int comicId)
 		{
 			using (var db = new LiteDatabase(DatabaseLocation))
