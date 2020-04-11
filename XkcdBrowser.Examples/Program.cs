@@ -17,16 +17,25 @@
 			Comic tenTwentyFour = Xkcd.GetComic(1024);
 
 			// Get the next comic
-			var tenTwentyFive = tenTwentyFour.Next();
+			Comic tenTwentyFive = tenTwentyFour.Next();
 
 			// Get the previous comic
-			var tenTwentyThree = tenTwentyFour.Previous();
+			Comic tenTwentyThree = tenTwentyFour.Previous();
 
 			// There's nothing before the first comic
-			var badFirst = first.Previous();
+			Comic badFirst = first.Previous();
 
 			// ...and nothing after the latest
-			var badLast = latest.Next();
+			Comic badLast = latest.Next();
+
+			// Get the dictionary of comic archive entries, keyed on comic ID
+			var comicDict = Xkcd.ComicDictionary;
+
+			// Refresh the comic dictionary
+			Xkcd.RefreshComicDictionary();
+
+			// Set a custom location for the cache db (uses LiteDB)
+			Xkcd.DatabaseLocation = @"C:\Temp\xkcd.db";
 		}
 	}
 }
