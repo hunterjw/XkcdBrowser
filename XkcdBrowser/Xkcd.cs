@@ -55,22 +55,68 @@ namespace XkcdBrowser
 		/// <returns>Comic object</returns>
 		private static Comic GetComic(ComicArchiveEntry comicArchiveEntry, string url, HtmlDocument doc)
 		{
-			HtmlNode headNode = doc.DocumentNode.Descendants().Where(x => x.Name == "head").FirstOrDefault();
-			HtmlNode metaImageNode = headNode.Descendants().Where(x =>
-				x.Name == "meta" && x.Attributes["property"] != null && x.Attributes["property"].DeEntitizeValue == "og:image")
-				.FirstOrDefault();
-			HtmlNode comicNode = doc.DocumentNode.Descendants().Where(y => y.Id == "comic").FirstOrDefault();
-			HtmlNode comicImageNode = comicNode.Descendants().Where(x => x.Name == "img").FirstOrDefault();
 			string imageUrl = string.Empty;
-			if (metaImageNode != null)
-			{
-				imageUrl = metaImageNode.Attributes["content"].DeEntitizeValue;
-			}
 			string altText = string.Empty;
-			if (comicImageNode != null)
+
+			switch (comicArchiveEntry.Id)
 			{
-				altText = comicImageNode.Attributes["title"].DeEntitizeValue;
+				case 1350:
+					imageUrl = "https://imgs.xkcd.com/comics/shouldnt_be_hard.png";
+					altText = "Every choice, no matter how small, begins a new story.";
+					break;
+				case 1416:
+					imageUrl = "https://imgs.xkcd.com/comics/pixels.png";
+					altText = "It's turtles all the way down.";
+					break;
+				case 1506:
+					imageUrl = "https://imgs.xkcd.com/comics/xkcloud.png";
+					altText = string.Empty; // No alt text for this comic
+					break;
+				case 1525:
+					imageUrl = "https://imgs.xkcd.com/comics/emojic_8_ball.png";
+					altText = string.Empty; // No alt text for this comic
+					break;
+				case 1608:
+					// This comic is interactive, and difficult.
+					// TODO: I should find a better way to display this one
+					imageUrl = string.Empty;
+					altText = string.Empty;
+					break;
+				case 1663:
+					imageUrl = string.Empty; // Interactive with no static image
+					altText = "Relax";
+					break;
+				case 2067:
+					imageUrl = "https://imgs.xkcd.com/comics/challengers.png";
+					altText = "Use your mouse or fingers to pan + zoom. To edit the map, submit your ballot on November 6th.";
+					break;
+				case 2198:
+					imageUrl = "https://imgs.xkcd.com/comics/throw.png";
+					altText = "The keys to successfully throwing a party are location, planning, and one of those aircraft carrier steam catapults.";
+					break;
+				default:
+					HtmlNode headNode = doc.DocumentNode.Descendants().Where(x => x.Name == "head").FirstOrDefault();
+					HtmlNode metaImageNode = headNode.Descendants().Where(x =>
+						x.Name == "meta" && x.Attributes["property"] != null && x.Attributes["property"].DeEntitizeValue == "og:image")
+						.FirstOrDefault();
+					HtmlNode comicNode = doc.DocumentNode.Descendants().Where(y => y.Id == "comic").FirstOrDefault();
+					HtmlNode comicImageNode = comicNode.Descendants().Where(x => x.Name == "img").FirstOrDefault();
+
+					if (metaImageNode != null && metaImageNode.Attributes["content"] != null)
+					{
+						imageUrl = metaImageNode.Attributes["content"].DeEntitizeValue;
+					}
+					if (imageUrl == string.Empty && comicImageNode != null && comicImageNode.Attributes["src"] != null)
+					{
+						imageUrl = $"https:{comicImageNode.Attributes["src"].DeEntitizeValue}";
+					}
+					if (comicImageNode != null && comicImageNode.Attributes["title"] != null)
+					{
+						altText = comicImageNode.Attributes["title"].DeEntitizeValue;
+					}
+					break;
 			}
+
 			return new Comic
 			{
 				Id = comicArchiveEntry.Id,
@@ -133,6 +179,7 @@ namespace XkcdBrowser
 
 		/// <summary>
 		/// Gets a random comic, using the xkcd random comic url
+		/// TODO: Replace this with a local random getter, using the archive dictionary
 		/// </summary>
 		/// <returns>Random comic</returns>
 		public static Comic GetRandomComic()
