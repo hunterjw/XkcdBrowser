@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using LiteDB;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -264,24 +265,15 @@ namespace XkcdBrowser
 		}
 
 		/// <summary>
-		/// Gets a random comic, using the xkcd random comic url
-		/// TODO: Replace this with a local random getter, using the archive dictionary
+		/// Gets a random comic
 		/// </summary>
 		/// <returns>Random comic</returns>
 		public static Comic GetRandomComic()
 		{
-			var randomUrl = "https://c.xkcd.com/random/comic/";
-			var web = new HtmlWeb();
-			HtmlDocument doc = web.Load(randomUrl);
-			HtmlNode headNode = doc.DocumentNode.Descendants().Where(x => x.Name == "head").FirstOrDefault();
-			HtmlNode metaUrlNode = headNode.Descendants().Where(x =>
-				x.Name == "meta" && x.Attributes["property"] != null && x.Attributes["property"].DeEntitizeValue == "og:url")
-				.FirstOrDefault();
-			var url = metaUrlNode.Attributes["content"].DeEntitizeValue;
-			var urlPieces = url.Split('/');
-			var id = int.Parse(urlPieces[urlPieces.Length - 2]);
-			ComicArchiveEntry comicListEntry = ComicDictionary[id];
-			return GetComic(comicListEntry, url, doc);
+			var rand = new Random();
+			var values = ComicDictionary.Values.ToList();
+			int size = values.Count;
+			return GetComic(values[rand.Next(size)]);
 		}
 
 		/// <summary>
