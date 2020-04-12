@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace XkcdBrowser
+namespace XkcdBrowser.Models
 {
 	/// <summary>
 	/// A xkcd comic

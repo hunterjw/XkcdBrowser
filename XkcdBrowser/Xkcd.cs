@@ -2,9 +2,8 @@
 using LiteDB;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
+using XkcdBrowser.Models;
 
 namespace XkcdBrowser
 {
@@ -15,26 +14,6 @@ namespace XkcdBrowser
 	{
 		#region Properties
 		private static Dictionary<int, ComicArchiveEntry> PrivateComicDictionary { get; set; }
-		private static string PrivateDatabseLocation { get; set; }
-
-		/// <summary>
-		/// Location of the database file
-		/// </summary>
-		public static string DatabaseLocation
-		{
-			get
-			{
-				if (string.IsNullOrEmpty(PrivateDatabseLocation))
-				{
-					PrivateDatabseLocation = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "xkcd.db");
-				}
-				return PrivateDatabseLocation;
-			}
-			set
-			{
-				PrivateDatabseLocation = value;
-			}
-		}
 
 		/// <summary>
 		/// A dictionary of all comics, keyed by comic ID
@@ -60,44 +39,24 @@ namespace XkcdBrowser
 		/// <returns>Dictionary of comics, keyed on comic ID</returns>
 		private static Dictionary<int, ComicArchiveEntry> GetComicDictionary(bool forceRefresh)
 		{
-			using (var db = new LiteDatabase(DatabaseLocation))
+			List<ComicArchiveEntry> comicArchiveEntryList = XkcdDatabase.ComicArchiveEntries;
+
+			if (comicArchiveEntryList.Count() < 1 || forceRefresh)
 			{
-				ILiteCollection<ComicArchiveEntry> collection = db.GetCollection<ComicArchiveEntry>("ComicArchive");
-				List<ComicArchiveEntry> comicArchiveEntryList;
-
-				if (collection.Count() < 1 || forceRefresh)
+				var web = new HtmlWeb();
+				HtmlDocument doc = web.Load("https://xkcd.com/archive/");
+				HtmlNode middleContainer = doc.DocumentNode.Descendants().FirstOrDefault(x => x.Id == "middleContainer");
+				comicArchiveEntryList = middleContainer.Descendants().Where(x => x.Name == "a").Select(a => new ComicArchiveEntry
 				{
-					var web = new HtmlWeb();
-					HtmlDocument doc = web.Load("https://xkcd.com/archive/");
-					HtmlNode middleContainer = doc.DocumentNode.Descendants().FirstOrDefault(x => x.Id == "middleContainer");
-					comicArchiveEntryList = middleContainer.Descendants().Where(x => x.Name == "a").Select(a => new ComicArchiveEntry
-					{
-						Id = int.Parse(a.Attributes["href"].Value.Split('/')[1]),
-						Date = a.Attributes["title"].Value,
-						Title = a.InnerText
-					}).ToList();
+					Id = int.Parse(a.Attributes["href"].Value.Split('/')[1]),
+					Date = a.Attributes["title"].Value,
+					Title = a.InnerText
+				}).ToList();
 
-					foreach (ComicArchiveEntry entry in comicArchiveEntryList)
-					{
-						if (collection.FindById(entry.Id) != null)
-						{
-							collection.Update(entry);
-						}
-						else
-						{
-							collection.Insert(entry);
-						}
-					}
-
-					collection.EnsureIndex(x => x.Id);
-				}
-				else
-				{
-					comicArchiveEntryList = collection.Query().ToList();
-				}
-
-				return comicArchiveEntryList.ToDictionary(x => x.Id);
+				XkcdDatabase.ComicArchiveEntries = comicArchiveEntryList;
 			}
+
+			return comicArchiveEntryList.ToDictionary(x => x.Id);
 		}
 
 		/// <summary>
@@ -175,34 +134,8 @@ namespace XkcdBrowser
 				PermaLink = url,
 				Date = comicArchiveEntry.Date
 			};
-			using (var db = new LiteDatabase(DatabaseLocation))
-			{
-				ILiteCollection<Comic> collection = db.GetCollection<Comic>("Comic");
-				if (collection.FindById(comic.Id) != null)
-				{
-					collection.Update(comic);
-				}
-				else
-				{
-					collection.Insert(comic);
-				}
-				collection.EnsureIndex(x => x.Id);
-			}
+			XkcdDatabase.InsertOrUpdateComic(comic);
 			return comic;
-		}
-
-		/// <summary>
-		/// Gets a comic from the cached database
-		/// </summary>
-		/// <param name="comicId">Comic ID</param>
-		/// <returns>Comic object if found, null otherwise</returns>
-		private static Comic GetComicFromDB(int comicId)
-		{
-			using (var db = new LiteDatabase(DatabaseLocation))
-			{
-				ILiteCollection<Comic> collection = db.GetCollection<Comic>("Comic");
-				return collection.FindById(comicId);
-			}
 		}
 		#endregion
 
@@ -214,7 +147,7 @@ namespace XkcdBrowser
 		/// <returns>Comic object</returns>
 		public static Comic GetComic(ComicArchiveEntry comicArchiveEntry)
 		{
-			Comic comic = GetComicFromDB(comicArchiveEntry.Id);
+			Comic comic = XkcdDatabase.GetComic(comicArchiveEntry.Id);
 			if (comic != null)
 			{
 				return comic;
@@ -232,7 +165,7 @@ namespace XkcdBrowser
 		/// <returns>Requested comic</returns>
 		public static Comic GetComic(int id)
 		{
-			Comic comic = GetComicFromDB(id);
+			Comic comic = XkcdDatabase.GetComic(id);
 			if (comic != null)
 			{
 				return comic;

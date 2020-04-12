@@ -1,4 +1,4 @@
-﻿namespace XkcdBrowser
+﻿namespace XkcdBrowser.Models
 {
 	/// <summary>
 	/// A comic archive list entry

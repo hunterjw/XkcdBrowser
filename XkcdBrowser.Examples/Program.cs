@@ -1,4 +1,7 @@
-﻿namespace XkcdBrowser.Examples
+﻿using System.Collections.Generic;
+using XkcdBrowser.Models;
+
+namespace XkcdBrowser.Examples
 {
 	class Program
 	{
@@ -29,13 +32,13 @@
 			Comic badLast = latest.Next();
 
 			// Get the dictionary of comic archive entries, keyed on comic ID
-			var comicDict = Xkcd.ComicDictionary;
+			Dictionary<int, ComicArchiveEntry> comicDict = Xkcd.ComicDictionary;
 
 			// Refresh the comic dictionary
 			Xkcd.RefreshComicDictionary();
 
 			// Set a custom location for the cache db (uses LiteDB)
-			Xkcd.DatabaseLocation = @"C:\Temp\xkcd.db";
+			XkcdDatabase.DatabaseLocation = @"C:\Temp\xkcd.db";
 		}
 	}
 }
