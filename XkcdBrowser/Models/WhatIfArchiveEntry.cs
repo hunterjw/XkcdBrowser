@@ -33,6 +33,6 @@
 		/// <summary>
 		/// Article for this archive entry
 		/// </summary>
-		public WhatIfArticle Article => WhatIf.GetArticle(this);
+		public WhatIfArticle Article() => WhatIf.GetArticle(this);
 	}
 }

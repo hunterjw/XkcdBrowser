@@ -23,6 +23,6 @@
 		/// <summary>
 		/// Comic for this archive entry
 		/// </summary>
-		public Comic Comic => Xkcd.GetComic(this);
+		public Comic Comic() => Xkcd.GetComic(this);
 	}
 }
