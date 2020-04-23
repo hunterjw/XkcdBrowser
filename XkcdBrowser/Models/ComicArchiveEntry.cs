@@ -19,5 +19,10 @@
 		/// Comic title
 		/// </summary>
 		public string Title { get; set; }
+
+		/// <summary>
+		/// Comic for this archive entry
+		/// </summary>
+		public Comic Comic => Xkcd.GetComic(this);
 	}
 }

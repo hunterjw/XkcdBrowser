@@ -7,6 +7,16 @@ namespace XkcdBrowser.Examples
 	{
 		static void Main(string[] args)
 		{
+			ComicExamples();
+
+			WhatIfExamples();
+
+			// Set a custom location for the cache db (uses LiteDB)
+			XkcdDatabase.DatabaseLocation = @"C:\Temp\xkcd.db";
+		}
+
+		static void ComicExamples()
+		{
 			// Get the first comic
 			Comic first = Xkcd.GetFirstComic();
 
@@ -36,9 +46,39 @@ namespace XkcdBrowser.Examples
 
 			// Refresh the comic dictionary
 			Xkcd.RefreshComicDictionary();
+		}
 
-			// Set a custom location for the cache db (uses LiteDB)
-			XkcdDatabase.DatabaseLocation = @"C:\Temp\xkcd.db";
+		static void WhatIfExamples()
+		{
+			// Get the first What If article
+			WhatIfArticle first = WhatIf.GetFirstArticle();
+
+			// Get the latest What If article
+			WhatIfArticle latest = WhatIf.GetLatestArticle();
+
+			// Get a random What If article
+			WhatIfArticle random = WhatIf.GetRandomArticle();
+
+			// Get a specific What If article by ID
+			WhatIfArticle fortyTwo = WhatIf.GetArticle(42);
+
+			// Get the next article
+			WhatIfArticle fortyThree = fortyTwo.Next();
+
+			// Get the previous article
+			WhatIfArticle fortyOne = fortyTwo.Previous();
+
+			// There's nothing before the first article
+			WhatIfArticle badFirst = first.Previous();
+
+			// ...and nothing after the latest
+			WhatIfArticle badLast = latest.Next();
+
+			// Get the dictionary of What If article entries, keyed on article ID
+			Dictionary<int, WhatIfArchiveEntry> dict = WhatIf.WhatIfDictionary;
+
+			// Refresh the article dictionary
+			WhatIf.RefreshWhatIfDictionary();
 		}
 	}
 }

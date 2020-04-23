@@ -13,6 +13,8 @@ namespace XkcdBrowser
 	{
 		private const string ComicArchiveCollectionName = "ComicArchive";
 		private const string ComicCollectionName = "Comic";
+		private const string WhatIfArchiveCollectionName = "WhatIfArchive";
+		private const string WhatIfCollectionName = "WhatIf";
 
 		private static string PrivateDatabaseLocation { get; set; }
 
@@ -101,6 +103,75 @@ namespace XkcdBrowser
 			{
 				ILiteCollection<Comic> collection = db.GetCollection<Comic>(ComicCollectionName);
 				return collection.FindById(comicId);
+			}
+		}
+
+		/// <summary>
+		/// List of What If archive entries from the the database
+		/// </summary>
+		internal static List<WhatIfArchiveEntry> WhatIfArchiveEntries
+		{
+			get
+			{
+				using (var db = new LiteDatabase(DatabaseLocation))
+				{
+					ILiteCollection<WhatIfArchiveEntry> collection = db.GetCollection<WhatIfArchiveEntry>(WhatIfArchiveCollectionName);
+					return collection.Query().ToList();
+				}
+			}
+			set
+			{
+				using (var db = new LiteDatabase(DatabaseLocation))
+				{
+					ILiteCollection<WhatIfArchiveEntry> collection = db.GetCollection<WhatIfArchiveEntry>(WhatIfArchiveCollectionName);
+					foreach (WhatIfArchiveEntry entry in value)
+					{
+						if (collection.FindById(entry.Id) != null)
+						{
+							collection.Update(entry);
+						}
+						else
+						{
+							collection.Insert(entry);
+						}
+					}
+					collection.EnsureIndex(x => x.Id);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Inserts or updates a What If article in the database
+		/// </summary>
+		/// <param name="comic">Article to insert or update</param>
+		internal static void InsertOrUpdateWhatIfArticle(WhatIfArticle article)
+		{
+			using (var db = new LiteDatabase(DatabaseLocation))
+			{
+				ILiteCollection<WhatIfArticle> collection = db.GetCollection<WhatIfArticle>(WhatIfCollectionName);
+				if (collection.FindById(article.Id) != null)
+				{
+					collection.Update(article);
+				}
+				else
+				{
+					collection.Insert(article);
+				}
+				collection.EnsureIndex(x => x.Id);
+			}
+		}
+
+		/// <summary>
+		/// Gets a What If article from the database
+		/// </summary>
+		/// <param name="articleId">Article ID</param>
+		/// <returns>Article if found, null otherwise</returns>
+		internal static WhatIfArticle GetWhatIfArticle(int articleId)
+		{
+			using (var db = new LiteDatabase(DatabaseLocation))
+			{
+				ILiteCollection<WhatIfArticle> collection = db.GetCollection<WhatIfArticle>(WhatIfArchiveCollectionName);
+				return collection.FindById(articleId);
 			}
 		}
 	}
