@@ -64,5 +64,10 @@ namespace XkcdBrowser.Models
 			}
 			return null;
 		}
+
+		/// <summary>
+		/// Link to the Explain xkcd article for this comic
+		/// </summary>
+		public string ExplainLink => $"https://www.explainxkcd.com/wiki/index.php/{Id}";
 	}
 }
