@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.29926.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XkcdBrowser", "XkcdBrowser\XkcdBrowser.csproj", "{FEA5A835-5F9C-422F-AD80-0127722DF690}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XkcdBrowser.Examples", "XkcdBrowser.Examples\XkcdBrowser.Examples.csproj", "{A936C5D0-9F34-407A-9B2D-0C13B5F2D25A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XkcdBrowser.Examples", "XkcdBrowser.Examples\XkcdBrowser.Examples.csproj", "{A936C5D0-9F34-407A-9B2D-0C13B5F2D25A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XkcdBrowser.AndroidApp", "XkcdBrowser.AndroidApp\XkcdBrowser.AndroidApp.csproj", "{481E84B0-0DD2-4228-94E2-221FAA867C9E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,12 @@ Global
 		{A936C5D0-9F34-407A-9B2D-0C13B5F2D25A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A936C5D0-9F34-407A-9B2D-0C13B5F2D25A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A936C5D0-9F34-407A-9B2D-0C13B5F2D25A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{481E84B0-0DD2-4228-94E2-221FAA867C9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{481E84B0-0DD2-4228-94E2-221FAA867C9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{481E84B0-0DD2-4228-94E2-221FAA867C9E}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{481E84B0-0DD2-4228-94E2-221FAA867C9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{481E84B0-0DD2-4228-94E2-221FAA867C9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{481E84B0-0DD2-4228-94E2-221FAA867C9E}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
