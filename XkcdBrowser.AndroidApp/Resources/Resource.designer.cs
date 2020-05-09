@@ -4007,13 +4007,13 @@ namespace XkcdBrowser.AndroidApp
 			public const int abc_tooltip = 2131427355;
 			
 			// aapt resource value: 0x7F0B001C
-			public const int activity_main = 2131427356;
+			public const int browser_actions_context_menu_page = 2131427356;
 			
 			// aapt resource value: 0x7F0B001D
-			public const int browser_actions_context_menu_page = 2131427357;
+			public const int browser_actions_context_menu_row = 2131427357;
 			
 			// aapt resource value: 0x7F0B001E
-			public const int browser_actions_context_menu_row = 2131427358;
+			public const int comic = 2131427358;
 			
 			// aapt resource value: 0x7F0B001F
 			public const int comic_detail = 2131427359;
