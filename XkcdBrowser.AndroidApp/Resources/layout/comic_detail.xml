@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/abc_select_dialog_padding_start_material">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/comicDetailHeader"
+        android:layout_alignParentTop="true">
+        <TextView
+            android:text="Comic Number"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/comicNumberTextView" 
+            android:layout_weight="1"/>
+        <TextView
+            android:text="Comic Date"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/comicDateTextView"
+            android:layout_weight="1"
+            android:textAlignment="textEnd" />
+    </LinearLayout>
+    <TextView
+        android:text="Comic Alt Text"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:id="@+id/altTextView" 
+        android:layout_below="@+id/comicDetailHeader"/>
+    <Button
+        android:text="Explain"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/explainButton" 
+        android:layout_below="@+id/altTextView"/>
+</RelativeLayout>

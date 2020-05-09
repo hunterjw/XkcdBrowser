@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Android.Content;
 using Android.Graphics;
 using Android.Widget;
