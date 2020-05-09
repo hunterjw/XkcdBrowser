@@ -108,8 +108,6 @@ namespace XkcdBrowser.AndroidApp
 			explainButton.Click += (s, a) =>
 			{
 				Xamarin.Essentials.Browser.OpenAsync(CurrentComic.ExplainLink);
-				//popupDialog.Dismiss();
-				//popupDialog.Hide();
 			};
 		}
 	}

@@ -52,8 +52,7 @@ namespace XkcdBrowser.AndroidApp
 				DownloadComic(comic, dataFolder, out string comicPath);
 
 				comicTitleView.Text = comic.Title;
-				Bitmap bitmap = BitmapFactory.DecodeFile(comicPath);
-				comicImageView.SetImageBitmap(bitmap);
+				comicImageView.SetImageURI(Android.Net.Uri.Parse(comicPath));
 			}
 			catch
 			{
