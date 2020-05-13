@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+	<item android:title="xkcd">
+		<menu>
+			<group android:checkableBehavior="single">
+				<item
+				android:id="@+id/nav_comic_main"
+				android:title="Comic" />
+				<item
+				android:id="@+id/nav_comic_list"
+				android:title="List" />
+				<item
+				android:id="@+id/nav_comic_favs"
+				android:title="Favorites" />
+			</group>
+		</menu>
+	</item>
+
+	<item android:title="WhatIf">
+		<menu>
+			<group android:checkableBehavior="single">
+				<item
+				android:id="@+id/nav_whatif_main"
+				android:title="Article" />
+				<item
+				android:id="@+id/nav_whatif_list"
+				android:title="List" />
+				<item
+				android:id="@+id/nav_whatif_favs"
+				android:title="Favorites" />
+			</group>
+		</menu>
+	</item>
+
+	<group android:checkableBehavior="single">
+		<item
+		android:id="@+id/nav_settings"
+		android:title="Settings" />
+
+		<item
+		android:id="@+id/nav_about"
+		android:title="About" />
+	</group>
+</menu>
