@@ -14,7 +14,10 @@ namespace XkcdBrowser.AndroidApp
 		ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation | Android.Content.PM.ConfigChanges.ScreenSize)]
 	public class MainActivity : AppCompatActivity
 	{
+		private XkcdAndroid XkcdAndroid { get; set; }
 		private Comic CurrentComic { get; set; }
+		private TextView ComicTitleView { get; set; }
+		private PhotoView ComicPhotoView { get; set; }
 
 		protected override void OnCreate(Bundle savedInstanceState)
 		{
@@ -23,8 +26,8 @@ namespace XkcdBrowser.AndroidApp
 			// Set our view from the "main" layout resource
 			SetContentView(Resource.Layout.comic);
 
-			TextView comicTitleView = FindViewById<TextView>(Resource.Id.comicTextView);
-			PhotoView comicPhotoView = FindViewById<PhotoView>(Resource.Id.comicPhotoView);
+			ComicTitleView = FindViewById<TextView>(Resource.Id.comicTextView);
+			ComicPhotoView = FindViewById<PhotoView>(Resource.Id.comicPhotoView);
 			Button firstButton = FindViewById<Button>(Resource.Id.firstButton);
 			Button previousButton = FindViewById<Button>(Resource.Id.previousButton);
 			Button randomButton = FindViewById<Button>(Resource.Id.randomButton);
@@ -37,9 +40,10 @@ namespace XkcdBrowser.AndroidApp
 			nextButton.Click += NextButton_Click;
 			latestButton.Click += LatestButton_Click;
 
-			comicPhotoView.LongClick += ComicPhotoView_LongClick;
+			ComicPhotoView.LongClick += ComicPhotoView_LongClick;
 
-			CurrentComic = XkcdAndroid.LatestComic(ApplicationContext, comicTitleView, comicPhotoView);
+			XkcdAndroid = new XkcdAndroid(this, ComicTitleView, ComicPhotoView);
+			CurrentComic = XkcdAndroid.LatestComic();
 		}
 
 		public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
@@ -51,42 +55,27 @@ namespace XkcdBrowser.AndroidApp
 
 		public void FirstButton_Click(object sender, EventArgs args)
 		{
-			TextView comicTitleView = FindViewById<TextView>(Resource.Id.comicTextView);
-			PhotoView comicPhotoView = FindViewById<PhotoView>(Resource.Id.comicPhotoView);
-
-			CurrentComic = XkcdAndroid.FirstComic(ApplicationContext, comicTitleView, comicPhotoView);
+			CurrentComic = XkcdAndroid.FirstComic();
 		}
 
 		public void PreviousButton_Click(object sender, EventArgs args)
 		{
-			TextView comicTitleView = FindViewById<TextView>(Resource.Id.comicTextView);
-			PhotoView comicPhotoView = FindViewById<PhotoView>(Resource.Id.comicPhotoView);
-
-			CurrentComic = XkcdAndroid.PreviousComic(ApplicationContext, comicTitleView, comicPhotoView, CurrentComic);
+			CurrentComic = XkcdAndroid.PreviousComic(CurrentComic);
 		}
 
 		public void RandomButton_Click(object sender, EventArgs args)
 		{
-			TextView comicTitleView = FindViewById<TextView>(Resource.Id.comicTextView);
-			PhotoView comicPhotoView = FindViewById<PhotoView>(Resource.Id.comicPhotoView);
-
-			CurrentComic = XkcdAndroid.RandomComic(ApplicationContext, comicTitleView, comicPhotoView);
+			CurrentComic = XkcdAndroid.RandomComic();
 		}
 
 		public void NextButton_Click(object sender, EventArgs args)
 		{
-			TextView comicTitleView = FindViewById<TextView>(Resource.Id.comicTextView);
-			PhotoView comicPhotoView = FindViewById<PhotoView>(Resource.Id.comicPhotoView);
-
-			CurrentComic = XkcdAndroid.NextComic(ApplicationContext, comicTitleView, comicPhotoView, CurrentComic);
+			CurrentComic = XkcdAndroid.NextComic(CurrentComic);
 		}
 
 		public void LatestButton_Click(object sender, EventArgs args)
 		{
-			TextView comicTitleView = FindViewById<TextView>(Resource.Id.comicTextView);
-			PhotoView comicPhotoView = FindViewById<PhotoView>(Resource.Id.comicPhotoView);
-
-			CurrentComic = XkcdAndroid.LatestComic(ApplicationContext, comicTitleView, comicPhotoView);
+			CurrentComic = XkcdAndroid.LatestComic();
 		}
 
 		public void ComicPhotoView_LongClick(object sender, EventArgs args)

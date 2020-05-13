@@ -8,22 +8,34 @@ using XkcdBrowser.Models;
 
 namespace XkcdBrowser.AndroidApp
 {
-	public static class XkcdAndroid
+	public class XkcdAndroid
 	{
-		private static void SetupDatabase(Context context, out string dataFolder)
-		{
-			dataFolder = System.IO.Path.Combine(context.GetExternalFilesDir("").ToString(), "XkcdData");
-			if (!Directory.Exists(dataFolder))
-			{
-				Directory.CreateDirectory(dataFolder);
-			}
+		private Context Context { get; set; }
+		private TextView ComicTitleView { get; set; }
+		private ImageView ComicImageView { get; set; }
+		private string DataFolder { get; set; }
 
-			XkcdDatabase.DatabaseLocation = System.IO.Path.Combine(dataFolder, "xkcd.db");
+		public XkcdAndroid(Context context, TextView comicTitleView, ImageView comicImageView)
+		{
+			Context = context;
+			ComicTitleView = comicTitleView;
+			ComicImageView = comicImageView;
+			DataFolder = System.IO.Path.Combine(Context.GetExternalFilesDir("").ToString(), "XkcdData");
+			SetupDatabase();
 		}
 
-		private static void DownloadComic(Comic comic, string dataFolder, out string comicPath)
+		private void SetupDatabase()
 		{
-			comicPath = System.IO.Path.Combine(dataFolder, System.IO.Path.GetFileName(comic.ImageUrl));
+			if (!Directory.Exists(DataFolder))
+			{
+				Directory.CreateDirectory(DataFolder);
+			}
+			XkcdDatabase.DatabaseLocation = System.IO.Path.Combine(DataFolder, "xkcd.db");
+		}
+
+		private void DownloadComic(Comic comic, out string comicPath)
+		{
+			comicPath = System.IO.Path.Combine(DataFolder, System.IO.Path.GetFileName(comic.ImageUrl));
 
 			if (!File.Exists(comicPath))
 			{
@@ -32,85 +44,77 @@ namespace XkcdBrowser.AndroidApp
 			}
 		}
 
-		private static void RefreshDatabase(Context context)
+		private void RefreshDatabase()
 		{
 			// todo: make this smarter so we aren't always refreshing the database
-			SetupDatabase(context, out _);
 			Xkcd.RefreshComicDictionary();
 		}
 
-		public static void LoadComic(Context context, TextView comicTitleView, ImageView comicImageView, Comic comic)
+		public void LoadComic(Comic comic)
 		{
 			// Clear out displays
-			comicTitleView.Text = string.Empty;
-			comicImageView.SetImageDrawable(null);
+			ComicTitleView.Text = string.Empty;
+			ComicImageView.SetImageDrawable(null);
 
 			try
 			{
-				SetupDatabase(context, out string dataFolder);
+				DownloadComic(comic, out string comicPath);
 
-				DownloadComic(comic, dataFolder, out string comicPath);
-
-				comicTitleView.Text = comic.Title;
-				comicImageView.SetImageURI(Android.Net.Uri.Parse(comicPath));
+				ComicTitleView.Text = comic.Title;
+				ComicImageView.SetImageURI(Android.Net.Uri.Parse(comicPath));
 			}
 			catch
 			{
-				comicTitleView.Text = "Error!";
+				ComicTitleView.Text = "Error!";
 			}
 		}
 
-		public static Comic FirstComic(Context context, TextView comicTitleView, ImageView comicImageView)
+		public Comic FirstComic()
 		{
-			SetupDatabase(context, out _);
 			Comic first = Xkcd.GetFirstComic();
 
-			LoadComic(context, comicTitleView, comicImageView, first);
+			LoadComic(first);
 
 			return first;
 		}
 
-		public static Comic PreviousComic(Context context, TextView comicTitleView, ImageView comicImageView, Comic current)
+		public Comic PreviousComic(Comic current)
 		{
-			SetupDatabase(context, out _);
 			Comic previous = current.Previous();
 			if (previous != null)
 			{
-				LoadComic(context, comicTitleView, comicImageView, previous);
+				LoadComic(previous);
 				return previous;
 			}
 			return current;
 		}
 
-		public static Comic RandomComic(Context context, TextView comicTitleView, ImageView comicImageView)
+		public Comic RandomComic()
 		{
-			SetupDatabase(context, out _);
 			Comic random = Xkcd.GetRandomComic();
 
-			LoadComic(context, comicTitleView, comicImageView, random);
+			LoadComic(random);
 
 			return random;
 		}
 
-		public static Comic NextComic(Context context, TextView comicTitleView, ImageView comicImageView, Comic current)
+		public Comic NextComic(Comic current)
 		{
-			SetupDatabase(context, out _);
 			Comic next = current.Next();
 			if (next != null)
 			{
-				LoadComic(context, comicTitleView, comicImageView, next);
+				LoadComic(next);
 				return next;
 			}
 			return current;
 		}
 
-		public static Comic LatestComic(Context context, TextView comicTitleView, ImageView comicImageView)
+		public Comic LatestComic()
 		{
-			SetupDatabase(context, out _);
-			RefreshDatabase(context);
+			RefreshDatabase();
 			Comic latest = Xkcd.GetLatestComic();
 
-			LoadComic(context, comicTitleView, comicImageView, latest);
+			LoadComic(latest);
 
 			return latest;
 		}
