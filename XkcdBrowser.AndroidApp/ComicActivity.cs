@@ -16,7 +16,7 @@ namespace XkcdBrowser.AndroidApp
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true,
         ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation | Android.Content.PM.ConfigChanges.ScreenSize)]
-    public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
+    public class ComicActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
         private XkcdAndroid XkcdAndroid { get; set; }
         private Comic CurrentComic { get; set; }
@@ -27,7 +27,7 @@ namespace XkcdBrowser.AndroidApp
         {
             base.OnCreate(savedInstanceState);
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
-            SetContentView(Resource.Layout.activity_main);
+            SetContentView(Resource.Layout.activity_comic);
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
 
