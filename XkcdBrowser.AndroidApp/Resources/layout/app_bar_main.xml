@@ -19,6 +19,9 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/comic" />
+    <FrameLayout android:id="@+id/main_activity_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+             />
 
 </android.support.design.widget.CoordinatorLayout>

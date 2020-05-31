@@ -2,7 +2,6 @@
 using System.IO;
 using System.Net;
 using Android.Content;
-using Android.Graphics;
 using Android.Widget;
 using XkcdBrowser.Models;
 
@@ -20,7 +19,7 @@ namespace XkcdBrowser.AndroidApp
 			Context = context;
 			ComicTitleView = comicTitleView;
 			ComicImageView = comicImageView;
-			DataFolder = System.IO.Path.Combine(Context.GetExternalFilesDir("").ToString(), "XkcdData");
+			DataFolder = Path.Combine(Context.GetExternalFilesDir("").ToString(), "XkcdData");
 			SetupDatabase();
 		}
 
@@ -30,12 +29,12 @@ namespace XkcdBrowser.AndroidApp
 			{
 				Directory.CreateDirectory(DataFolder);
 			}
-			XkcdDatabase.DatabaseLocation = System.IO.Path.Combine(DataFolder, "xkcd.db");
+			XkcdDatabase.DatabaseLocation = Path.Combine(DataFolder, "xkcd.db");
 		}
 
 		private void DownloadComic(Comic comic, out string comicPath)
 		{
-			comicPath = System.IO.Path.Combine(DataFolder, System.IO.Path.GetFileName(comic.ImageUrl));
+			comicPath = Path.Combine(DataFolder, Path.GetFileName(comic.ImageUrl));
 
 			if (!File.Exists(comicPath))
 			{
@@ -117,6 +116,13 @@ namespace XkcdBrowser.AndroidApp
 			LoadComic(latest);
 
 			return latest;
+		}
+
+		public Comic GetComic(int comicId)
+		{
+			Comic comic = Xkcd.GetComic(comicId);
+			LoadComic(comic);
+			return comic;
 		}
 	}
 }
