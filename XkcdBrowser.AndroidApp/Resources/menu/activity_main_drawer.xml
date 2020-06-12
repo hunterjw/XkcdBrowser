@@ -12,9 +12,6 @@
 				<item
 				android:id="@+id/nav_comic_list"
 				android:title="List" />
-				<item
-				android:id="@+id/nav_comic_favs"
-				android:title="Favorites" />
 			</group>
 		</menu>
 	</item>
@@ -28,9 +25,6 @@
 				<item
 				android:id="@+id/nav_whatif_list"
 				android:title="List" />
-				<item
-				android:id="@+id/nav_whatif_favs"
-				android:title="Favorites" />
 			</group>
 		</menu>
 	</item>
