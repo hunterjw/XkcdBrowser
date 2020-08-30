@@ -10,10 +10,9 @@ namespace XkcdBrowser.AndroidApp
 {
 	public class ComicFragment : Android.Support.V4.App.Fragment
 	{
-		private XkcdAndroid XkcdAndroid { get; set; }
-		private Comic CurrentComic { get; set; }
-		private TextView ComicTitleView { get; set; }
-		private PhotoView ComicPhotoView { get; set; }
+		public Comic CurrentComic { get; set; }
+		public TextView ComicTitleView { get; set; }
+		public PhotoView ComicPhotoView { get; set; }
 
 		public override void OnCreate(Bundle savedInstanceState)
 		{
@@ -51,42 +50,34 @@ namespace XkcdBrowser.AndroidApp
 
 			ComicPhotoView.LongClick += ComicPhotoView_LongClick;
 
-			XkcdAndroid = new XkcdAndroid(Context, ComicTitleView, ComicPhotoView);
-			if (ComicId != -1)
-			{
-				CurrentComic = XkcdAndroid.GetComic(ComicId);
-			}
-			else
-			{
-				CurrentComic = XkcdAndroid.LatestComic();
-			}
+			new XkcdAndroidTask(this, XkcdAndroidTaskType.Init).Execute();
 
 			return view;
 		}
 
 		public void FirstButton_Click(object sender, EventArgs args)
 		{
-			CurrentComic = XkcdAndroid.FirstComic();
+			new XkcdAndroidTask(this, XkcdAndroidTaskType.First).Execute();
 		}
 
 		public void PreviousButton_Click(object sender, EventArgs args)
 		{
-			CurrentComic = XkcdAndroid.PreviousComic(CurrentComic);
+			new XkcdAndroidTask(this, XkcdAndroidTaskType.Previous).Execute();
 		}
 
 		public void RandomButton_Click(object sender, EventArgs args)
 		{
-			CurrentComic = XkcdAndroid.RandomComic();
+			new XkcdAndroidTask(this, XkcdAndroidTaskType.RandomComic).Execute();
 		}
 
 		public void NextButton_Click(object sender, EventArgs args)
 		{
-			CurrentComic = XkcdAndroid.NextComic(CurrentComic);
+			new XkcdAndroidTask(this, XkcdAndroidTaskType.Next).Execute();
 		}
 
 		public void LatestButton_Click(object sender, EventArgs args)
 		{
-			CurrentComic = XkcdAndroid.LatestComic();
+			new XkcdAndroidTask(this, XkcdAndroidTaskType.Latest).Execute();
 		}
 
 		public void ComicPhotoView_LongClick(object sender, EventArgs args)

@@ -71,7 +71,7 @@
     <Compile Include="PlaceholderFragment.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="XkcdAndroid.cs" />
+    <Compile Include="XkcdAndroidTask.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
