@@ -38,8 +38,10 @@ namespace XkcdBrowser.AndroidApp
 
 			if (!File.Exists(comicPath))
 			{
-				using WebClient client = new WebClient();
-				client.DownloadFile(new Uri(comic.ImageUrl), comicPath);
+				using (WebClient client = new WebClient())
+				{
+					client.DownloadFile(new Uri(comic.ImageUrl), comicPath);
+				}
 			}
 		}
 
