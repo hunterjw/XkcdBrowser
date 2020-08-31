@@ -65,12 +65,14 @@
     <Reference Include="System.Numerics.Vectors" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComicListFragment.cs" />
     <Compile Include="MainContentSwitcher.cs" />
     <Compile Include="ComicFragment.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="PlaceholderFragment.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="XkcdAndroid.cs" />
     <Compile Include="XkcdAndroidTask.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -138,6 +140,16 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\placeholder_layout.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\comic_list.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\comic_list_row.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

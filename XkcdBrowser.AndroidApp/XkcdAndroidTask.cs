@@ -12,14 +12,14 @@ namespace XkcdBrowser.AndroidApp
 		private AlertDialog Dialog { get; set; }
 		private ComicFragment Parent { get; set; }
 		private XkcdAndroidTaskType TaskType { get; set; }
-		private string DataFolder { get; set; }
+		private XkcdAndroid XkcdAndroid { get; set; }
 
 		public XkcdAndroidTask(ComicFragment parent, XkcdAndroidTaskType taskType)
 		{
 			Parent = parent;
 			TaskType = taskType;
-			DataFolder = Path.Combine(Parent.Context.GetExternalFilesDir("").ToString(), "XkcdData");
-			SetupDatabase();
+			XkcdAndroid = new XkcdAndroid(Parent.Context);
+			XkcdAndroid.SetupDatabase();
 		}
 
 		protected override Java.Lang.Object DoInBackground(params Java.Lang.Object[] @params)
@@ -33,7 +33,7 @@ namespace XkcdBrowser.AndroidApp
 					}
 					else
 					{
-						RefreshDatabase();
+						XkcdAndroid.RefreshDatabase();
 						Parent.CurrentComic = Xkcd.GetLatestComic();
 					}
 					break;
@@ -58,7 +58,7 @@ namespace XkcdBrowser.AndroidApp
 					}
 					break;
 				case XkcdAndroidTaskType.Latest:
-					RefreshDatabase();
+					XkcdAndroid.RefreshDatabase();
 					Parent.CurrentComic = Xkcd.GetLatestComic();
 					break;
 			}
@@ -82,12 +82,6 @@ namespace XkcdBrowser.AndroidApp
 			base.OnPostExecute(result);
 		}
 
-		private void RefreshDatabase()
-		{
-			// todo: make this smarter so we aren't always refreshing the database
-			Xkcd.RefreshComicDictionary();
-		}
-
 		private void LoadComic(Comic comic)
 		{
 			// Clear out displays
@@ -109,7 +103,7 @@ namespace XkcdBrowser.AndroidApp
 
 		private void DownloadComic(Comic comic, out string comicPath)
 		{
-			comicPath = Path.Combine(DataFolder, Path.GetFileName(comic.ImageUrl));
+			comicPath = Path.Combine(XkcdAndroid.DataFolder, Path.GetFileName(comic.ImageUrl));
 
 			if (!File.Exists(comicPath))
 			{
@@ -118,15 +112,6 @@ namespace XkcdBrowser.AndroidApp
 					client.DownloadFile(new Uri(comic.ImageUrl), comicPath);
 				}
 			}
-		}
-
-		private void SetupDatabase()
-		{
-			if (!Directory.Exists(DataFolder))
-			{
-				Directory.CreateDirectory(DataFolder);
-			}
-			XkcdDatabase.DatabaseLocation = Path.Combine(DataFolder, "xkcd.db");
 		}
 	}
 

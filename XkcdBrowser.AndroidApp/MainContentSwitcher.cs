@@ -1,4 +1,5 @@
-﻿using Android.Support.V4.App;
+﻿using Android.Support.Design.Widget;
+using Android.Support.V4.App;
 
 namespace XkcdBrowser.AndroidApp
 {
@@ -18,10 +19,10 @@ namespace XkcdBrowser.AndroidApp
 			}
 			else if (navBarMenuId == Resource.Id.nav_comic_list)
 			{
-				var placeholderFrag = PlaceholderFragment.NewInstance("Comic List");
+				var comicListFrag = ComicListFragment.NewInstance(mainActivity);
 
 				FragmentTransaction tx = mainActivity.SupportFragmentManager.BeginTransaction();
-				tx.Replace(Resource.Id.main_activity_container, placeholderFrag);
+				tx.Replace(Resource.Id.main_activity_container, comicListFrag);
 				tx.Commit();
 
 				mainActivity.CurrentContentId = Resource.Id.nav_comic_list;
@@ -66,6 +67,19 @@ namespace XkcdBrowser.AndroidApp
 
 				mainActivity.CurrentContentId = Resource.Id.nav_about;
 			}
+		}
+
+		public static void SwitchToComic(MainActivity mainActivity, int comicId)
+		{
+			var comicFrag = ComicFragment.NewInstance(comicId);
+
+			FragmentTransaction tx = mainActivity.SupportFragmentManager.BeginTransaction();
+			tx.Replace(Resource.Id.main_activity_container, comicFrag);
+			tx.Commit();
+
+			mainActivity.CurrentContentId = Resource.Id.nav_comic_main;
+			NavigationView navigationView = mainActivity.FindViewById<NavigationView>(Resource.Id.nav_view);
+			navigationView.SetCheckedItem(Resource.Id.nav_comic_main);
 		}
 	}
 }
