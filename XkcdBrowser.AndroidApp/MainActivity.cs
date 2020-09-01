@@ -32,7 +32,8 @@ namespace XkcdBrowser.AndroidApp
 			navigationView.SetNavigationItemSelectedListener(this);
 			
 			navigationView.SetCheckedItem(Resource.Id.nav_comic_main);
-			MainContentSwitcher.SwitchContent(this, Resource.Id.nav_comic_main);
+			MainContentSwitcher.MainActivity = this;
+			MainContentSwitcher.SwitchContentFromNavBar(Resource.Id.nav_comic_main);
 		}
 
 		public override void OnBackPressed()
@@ -71,7 +72,7 @@ namespace XkcdBrowser.AndroidApp
 
 			if (id != CurrentContentId)
 			{
-				MainContentSwitcher.SwitchContent(this, id);
+				MainContentSwitcher.SwitchContentFromNavBar(id);
 			}
 
 			DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);

@@ -1,18 +1,29 @@
 ﻿using System.IO;
-using Android.Content;
+using Android.App;
 
 namespace XkcdBrowser.AndroidApp
 {
-	public class XkcdAndroid
+	public static class XkcdAndroid
 	{
-		public string DataFolder { get; set; }
+		private static string _dataFolder;
 
-		public XkcdAndroid(Context context)
+		public static string DataFolder
 		{
-			DataFolder = Path.Combine(context.GetExternalFilesDir("").ToString(), "XkcdData");
+			get
+			{
+				if (string.IsNullOrWhiteSpace(_dataFolder))
+				{
+					_dataFolder = Path.Combine(Application.Context.GetExternalFilesDir("").ToString(), "XkcdData");
+				}
+				return _dataFolder;
+			}
+			set
+			{
+				_dataFolder = value;
+			}
 		}
 
-		public void SetupDatabase()
+		public static void SetupDatabase()
 		{
 			if (!Directory.Exists(DataFolder))
 			{
@@ -21,7 +32,7 @@ namespace XkcdBrowser.AndroidApp
 			XkcdDatabase.DatabaseLocation = Path.Combine(DataFolder, "xkcd.db");
 		}
 
-		public void RefreshDatabase()
+		public static void RefreshDatabase()
 		{
 			// todo: make this smarter so we aren't always refreshing the database
 			Xkcd.RefreshComicDictionary();

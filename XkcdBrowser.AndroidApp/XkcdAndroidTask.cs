@@ -12,13 +12,11 @@ namespace XkcdBrowser.AndroidApp
 		private AlertDialog Dialog { get; set; }
 		private ComicFragment Parent { get; set; }
 		private XkcdAndroidTaskType TaskType { get; set; }
-		private XkcdAndroid XkcdAndroid { get; set; }
 
 		public XkcdAndroidTask(ComicFragment parent, XkcdAndroidTaskType taskType)
 		{
 			Parent = parent;
 			TaskType = taskType;
-			XkcdAndroid = new XkcdAndroid(Parent.Context);
 			XkcdAndroid.SetupDatabase();
 		}
 

@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
@@ -16,19 +11,15 @@ namespace XkcdBrowser.AndroidApp
 {
 	public class ComicListFragment : Android.Support.V4.App.Fragment
 	{
-		private XkcdAndroid XkcdAndroid { get; set; }
-
-		public MainActivity MainActivity { get; set; }
-		public RecyclerView RecyclerView { get; set; }
-		public RecyclerView.Adapter Adapter { get; set; }
-		public RecyclerView.LayoutManager LayoutManager { get; set; }
-		public List<ComicArchiveEntry> DataSet { get; set; }
+		private RecyclerView RecyclerView { get; set; }
+		private RecyclerView.Adapter Adapter { get; set; }
+		private RecyclerView.LayoutManager LayoutManager { get; set; }
+		private List<ComicArchiveEntry> DataSet { get; set; }
 
 		public override void OnCreate(Bundle savedInstanceState)
 		{
 			base.OnCreate(savedInstanceState);
 
-			XkcdAndroid = new XkcdAndroid(Application.Context);
 			if (Xkcd.ComicDictionary.Count < 1)
 			{
 				XkcdAndroid.RefreshDatabase();
@@ -36,13 +27,12 @@ namespace XkcdBrowser.AndroidApp
 			DataSet = Xkcd.ComicDictionary.Values.OrderByDescending(_ => _.Id).ToList();
 		}
 
-		public static ComicListFragment NewInstance(MainActivity mainActivity)
+		public static ComicListFragment NewInstance()
 		{
 			var bundle = new Bundle();
 			return new ComicListFragment
 			{
-				Arguments = bundle,
-				MainActivity = mainActivity
+				Arguments = bundle
 			};
 		}
 
@@ -54,7 +44,7 @@ namespace XkcdBrowser.AndroidApp
 			RecyclerView = view.FindViewById<RecyclerView>(Resource.Id.comicListRecyclerView);
 			LayoutManager = new LinearLayoutManager(Activity);
 			RecyclerView.SetLayoutManager(LayoutManager);
-			Adapter = new ComicListAdapter(DataSet, MainActivity);
+			Adapter = new ComicListAdapter(DataSet);
 			RecyclerView.SetAdapter(Adapter);
 
 			return view;
@@ -63,17 +53,16 @@ namespace XkcdBrowser.AndroidApp
 
 	public class ComicListAdapter : RecyclerView.Adapter
 	{
-		private List<ComicArchiveEntry> DataSet;
-		private MainActivity MainActivity;
+		private readonly List<ComicArchiveEntry> DataSet;
 
 		public class ComicListViewHolder : RecyclerView.ViewHolder
 		{
+			private LinearLayout ComicListRowLayout { get; set; }
+
 			public TextView TitleTextView { get; set; }
 			public TextView IdTextView { get; set; }
 			public TextView DateTextView { get; set; }
-			public LinearLayout ComicListRowLayout { get; set; }
 			public ComicArchiveEntry CurrentComic { get; set; }
-			public MainActivity MainActivity { get; set; }
 
 			public ComicListViewHolder(View view) : base(view)
 			{
@@ -87,14 +76,13 @@ namespace XkcdBrowser.AndroidApp
 
 			public void ComicListViewHolder_Click(object sender, EventArgs args)
 			{
-				MainContentSwitcher.SwitchToComic(MainActivity, CurrentComic.Id);
+				MainContentSwitcher.SwitchToComic(CurrentComic.Id);
 			}
 		}
 
-		public ComicListAdapter(List<ComicArchiveEntry> dataSet, MainActivity mainActivity)
+		public ComicListAdapter(List<ComicArchiveEntry> dataSet)
 		{
 			DataSet = dataSet;
-			MainActivity = mainActivity;
 		}
 
 		public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup viewGroup, int position)
@@ -110,7 +98,6 @@ namespace XkcdBrowser.AndroidApp
 
 			var comicHolder = holder as ComicListViewHolder;
 			comicHolder.CurrentComic = currentComic;
-			comicHolder.MainActivity = MainActivity;
 			comicHolder.TitleTextView.SetText(currentComic.Title, TextView.BufferType.Normal);
 			comicHolder.IdTextView.SetText($"#{currentComic.Id}", TextView.BufferType.Normal);
 			comicHolder.DateTextView.SetText(currentComic.Date, TextView.BufferType.Normal);
