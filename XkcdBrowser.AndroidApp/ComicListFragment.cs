@@ -22,7 +22,7 @@ namespace XkcdBrowser.AndroidApp
 
 			if (Xkcd.ComicDictionary.Count < 1)
 			{
-				XkcdAndroid.RefreshDatabase();
+				XkcdAndroid.RefreshComicDatabase();
 			}
 			DataSet = Xkcd.ComicDictionary.Values.OrderByDescending(_ => _.Id).ToList();
 		}

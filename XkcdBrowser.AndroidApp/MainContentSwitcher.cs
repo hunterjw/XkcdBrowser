@@ -31,10 +31,10 @@ namespace XkcdBrowser.AndroidApp
 			}
 			else if (navBarMenuId == Resource.Id.nav_whatif_main)
 			{
-				var placeholderFrag = PlaceholderFragment.NewInstance("What If");
+				var articleFrag = ArticleFragment.NewInstance();
 
 				FragmentTransaction tx = MainActivity.SupportFragmentManager.BeginTransaction();
-				tx.Replace(Resource.Id.main_activity_container, placeholderFrag);
+				tx.Replace(Resource.Id.main_activity_container, articleFrag);
 				tx.Commit();
 
 				MainActivity.CurrentContentId = Resource.Id.nav_whatif_main;

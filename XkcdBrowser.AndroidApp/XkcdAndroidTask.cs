@@ -31,7 +31,7 @@ namespace XkcdBrowser.AndroidApp
 					}
 					else
 					{
-						XkcdAndroid.RefreshDatabase();
+						XkcdAndroid.RefreshComicDatabase();
 						Parent.CurrentComic = Xkcd.GetLatestComic();
 					}
 					break;
@@ -56,7 +56,7 @@ namespace XkcdBrowser.AndroidApp
 					}
 					break;
 				case XkcdAndroidTaskType.Latest:
-					XkcdAndroid.RefreshDatabase();
+					XkcdAndroid.RefreshComicDatabase();
 					Parent.CurrentComic = Xkcd.GetLatestComic();
 					break;
 			}

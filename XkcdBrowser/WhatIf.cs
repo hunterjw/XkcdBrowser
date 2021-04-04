@@ -59,6 +59,7 @@ namespace XkcdBrowser
 						Date = node.Descendants().FirstOrDefault(x => x.HasClass("archive-date")).InnerText
 					});
 				}
+				XkcdDatabase.WhatIfArchiveEntries = articleArchiveList;
 			}
 			return articleArchiveList.ToDictionary(x => x.Id);
 		}

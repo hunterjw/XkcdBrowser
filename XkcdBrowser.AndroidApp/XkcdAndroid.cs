@@ -32,10 +32,16 @@ namespace XkcdBrowser.AndroidApp
 			XkcdDatabase.DatabaseLocation = Path.Combine(DataFolder, "xkcd.db");
 		}
 
-		public static void RefreshDatabase()
+		public static void RefreshComicDatabase()
 		{
 			// todo: make this smarter so we aren't always refreshing the database
 			Xkcd.RefreshComicDictionary();
+		}
+
+		public static void RefreshArticleDatabase()
+		{
+			// todo: make this smarter
+			WhatIf.RefreshWhatIfDictionary();
 		}
 	}
 }
